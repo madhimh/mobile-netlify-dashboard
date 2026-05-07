@@ -7,9 +7,11 @@ const REQUEST_TIMEOUT = 20000;
 const TIMEZONE = "Asia/Riyadh";
 
 const ARGAAM_FEEDS = [
-  ["أرقام", "https://www.argaam.com/ar/rss/ho-main-news?sectionid=1523"],
-  ["الشركات", "https://www.argaam.com/ar/rss/companies?sectionid=1543"],
-  ["نبض السوق", "https://www.argaam.com/ar/rss/ho-market-pulse?sectionid=70"]
+  ["أرقام - الرئيسية", "https://www.argaam.com/ar/rss/ho-main-news?sectionid=1523"],
+  ["أرقام - الشركات", "https://www.argaam.com/ar/rss/companies?sectionid=1543"],
+  ["أرقام - نبض السوق", "https://www.argaam.com/ar/rss/ho-market-pulse?sectionid=70"],
+  ["أرقام - العالمية", "https://www.argaam.com/ar/rss/internationmarket-mainnewsar?sectionid=1334"],
+  ["أرقام - خاص", "https://www.argaam.com/ar/rss/educationalmarket-mainnewsar?sectionid=1408"]
 ];
 
 const parser = new XMLParser({
@@ -326,13 +328,13 @@ export async function fetchArgaam(nowStr) {
         });
 
         count += 1;
-        if (count >= 30) break;
+        if (count >= 50) break;
       }
     } catch {}
   }
 
   itemsOut.sort((a, b) => parseDt(b.time) - parseDt(a.time));
-  return itemsOut.slice(0, 100);
+  return itemsOut.slice(0, 200);
 }
 
 function parseDt(v) {
