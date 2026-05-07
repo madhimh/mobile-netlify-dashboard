@@ -1,0 +1,18 @@
+[build]
+  publish = "public"
+  functions = "netlify/functions"
+
+[[redirects]]
+  from = "/api/dashboard"
+  to = "/.netlify/functions/dashboard"
+  status = 200
+
+[[redirects]]
+  from = "/api/add-symbol"
+  to = "/.netlify/functions/add-symbol"
+  status = 200
+
+[[redirects]]
+  from = "/api/remove-symbol"
+  to = "/.netlify/functions/remove-symbol"
+  status = 200

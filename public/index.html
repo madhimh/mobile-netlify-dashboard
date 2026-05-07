@@ -1,0 +1,369 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>لوحة الجوال</title>
+  <style>
+    :root {
+      --bg: #020617;
+      --panel: #0f172a;
+      --line: rgba(255,255,255,0.08);
+      --text: #f8fafc;
+      --muted: #94a3b8;
+      --up: #22c55e;
+      --down: #ef4444;
+      --flat: #f59e0b;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: "Segoe UI", Tahoma, Arial, sans-serif;
+      background: linear-gradient(180deg, #020617 0%, #0b1220 100%);
+      color: var(--text);
+    }
+    .app {
+      max-width: 430px;
+      margin: 0 auto;
+      padding: 12px;
+    }
+    .card {
+      background: rgba(15,23,42,0.95);
+      border: 1px solid var(--line);
+      border-radius: 22px;
+      padding: 14px;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.25);
+      margin-bottom: 12px;
+    }
+    .title-sm { color: var(--muted); font-size: 12px; }
+    .big-num { font-size: 36px; font-weight: 800; line-height: 1; margin-top: 6px; }
+    .muted { color: var(--muted); font-size: 12px; }
+    .row { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
+    .chips { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 10px; }
+    .chip {
+      border: 1px solid var(--line);
+      background: rgba(255,255,255,0.04);
+      padding: 6px 10px;
+      border-radius: 999px;
+      font-size: 12px;
+    }
+    .up { color: var(--up); }
+    .down { color: var(--down); }
+    .flat { color: var(--flat); }
+    .grid2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin-bottom: 12px;
+    }
+    .mini {
+      background: rgba(15,23,42,0.95);
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      padding: 12px;
+    }
+    .mini .val {
+      font-size: 24px;
+      font-weight: 700;
+      margin-top: 4px;
+    }
+    .toolbar { display: grid; gap: 8px; }
+    input, select, button {
+      width: 100%;
+      background: #172033;
+      border: 1px solid var(--line);
+      color: var(--text);
+      border-radius: 14px;
+      padding: 11px 12px;
+      font: inherit;
+      outline: none;
+    }
+    .btn-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+    }
+    .density-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 8px;
+    }
+    .density-btn.active {
+      background: #23314f;
+      border-color: #4f82ff;
+    }
+    .section-title {
+      font-size: 16px;
+      font-weight: 700;
+      margin-bottom: 10px;
+    }
+    .stock-list, .news-list {
+      display: grid;
+      gap: 8px;
+    }
+    .stock-item, .news-item {
+      border: 1px solid var(--line);
+      background: rgba(255,255,255,0.03);
+      border-radius: 18px;
+      padding: 12px;
+    }
+    .stock-name { font-size: 15px; font-weight: 700; }
+    .stock-price { font-size: 18px; font-weight: 700; text-align: left; }
+    .stock-sub { font-size: 12px; margin-top: 4px; }
+    .news-title { font-size: 14px; line-height: 1.7; }
+    .news-meta { margin-top: 6px; color: var(--muted); font-size: 12px; }
+    a { color: #93c5fd; text-decoration: none; }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <div class="card">
+      <div class="title-sm">مؤشر السوق الرئيسي</div>
+      <div class="big-num" id="tasiValue">--</div>
+      <div class="chips">
+        <div class="chip"><span id="tasiChange">--</span></div>
+        <div class="chip"><span id="tasiPct">--</span></div>
+      </div>
+      <div class="row" style="margin-top: 12px;">
+        <div class="muted">آخر تحديث: <span id="lastUpdate">--</span></div>
+        <div class="muted" id="statusText">--</div>
+      </div>
+    </div>
+
+    <div class="grid2">
+      <div class="mini">
+        <div class="title-sm">عدد الأسهم</div>
+        <div class="val" id="countCompanies">0</div>
+      </div>
+      <div class="mini">
+        <div class="title-sm">الأخبار</div>
+        <div class="val" id="countNews">0</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="section-title">التحكم</div>
+      <div class="toolbar">
+        <input id="stockInput" type="text" placeholder="أدخل الرمز مثل 8230">
+        <div class="btn-row">
+          <button id="addStockBtn">إضافة سهم</button>
+          <button id="removeStockBtn">حذف سهم</button>
+        </div>
+        <div class="density-row">
+          <button class="density-btn" data-density="compact">مضغوط</button>
+          <button class="density-btn active" data-density="medium">وسط</button>
+          <button class="density-btn" data-density="comfortable">مريح</button>
+        </div>
+        <select id="refreshSelect">
+          <option value="15">15 ثانية</option>
+          <option value="30" selected>30 ثانية</option>
+          <option value="60">60 ثانية</option>
+          <option value="120">120 ثانية</option>
+          <option value="300">5 دقائق</option>
+        </select>
+        <button id="refreshBtn">تحديث الآن</button>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="section-title">الأسعار</div>
+      <div class="stock-list" id="pricesBody"></div>
+    </div>
+
+    <div class="card">
+      <div class="section-title">آخر الأخبار</div>
+      <div class="news-list" id="newsList"></div>
+    </div>
+  </div>
+
+  <script>
+    const state = { refreshSeconds: 30, refreshTimer: null };
+
+    function num(v) {
+      const n = Number(v);
+      return Number.isFinite(n) ? n : null;
+    }
+
+    function formatNumber(value, decimals = 2) {
+      const n = num(value);
+      if (n === null) return "--";
+      return n.toLocaleString('en-US', {
+        minimumFractionDigits: decimals,
+        maximumFractionDigits: decimals
+      });
+    }
+
+    function changeClass(value) {
+      const n = num(value);
+      if (n === null) return 'flat';
+      if (n > 0) return 'up';
+      if (n < 0) return 'down';
+      return 'flat';
+    }
+
+    function signed(value, suffix='') {
+      const n = num(value);
+      if (n === null) return '--';
+      return `${n > 0 ? '+' : ''}${formatNumber(n)}${suffix}`;
+    }
+
+    function escapeHtml(text) {
+      return String(text ?? '')
+        .replaceAll('&', '&amp;')
+        .replaceAll('<', '&lt;')
+        .replaceAll('>', '&gt;')
+        .replaceAll('"', '&quot;')
+        .replaceAll("'", '&#039;');
+    }
+
+    function applyDensity(density) {
+      localStorage.setItem('mobileDensity', density);
+      document.querySelectorAll('.density-btn').forEach(btn => {
+        btn.classList.toggle('active', btn.dataset.density === density);
+      });
+
+      const app = document.querySelector('.app');
+      if (density === 'compact') {
+        app.style.maxWidth = '380px';
+      } else if (density === 'comfortable') {
+        app.style.maxWidth = '470px';
+      } else {
+        app.style.maxWidth = '430px';
+      }
+    }
+
+    function renderPrices(rows) {
+      const body = document.getElementById('pricesBody');
+      body.innerHTML = rows.map(row => {
+        const cls = changeClass(row.change);
+        return `
+          <div class="stock-item">
+            <div class="row">
+              <div>
+                <div class="stock-name">${escapeHtml(row.name)}</div>
+                <div class="stock-sub ${cls}">${signed(row.change)} • ${signed(row.changePct, '%')}</div>
+              </div>
+              <div class="stock-price">${formatNumber(row.price)}</div>
+            </div>
+          </div>
+        `;
+      }).join('');
+      document.getElementById('countCompanies').textContent = rows.length;
+    }
+
+    function renderNews(items) {
+      const list = document.getElementById('newsList');
+      if (!items.length) {
+        list.innerHTML = '<div class="news-item">لا توجد أخبار متاحة حالياً.</div>';
+      } else {
+        list.innerHTML = items.map(item => `
+          <div class="news-item">
+            <div class="news-title"><a href="${escapeHtml(item.url || '#')}" target="_blank" rel="noopener noreferrer">${escapeHtml(item.title)}</a></div>
+            <div class="news-meta">${escapeHtml(item.source || 'خبر')} • ${escapeHtml(item.time || '')}</div>
+          </div>
+        `).join('');
+      }
+      document.getElementById('countNews').textContent = items.length;
+    }
+
+    function updateTasiCard(tasi) {
+      const c1 = document.getElementById('tasiChange');
+      const c2 = document.getElementById('tasiPct');
+
+      document.getElementById('tasiValue').textContent = formatNumber(tasi?.price);
+      c1.textContent = signed(tasi?.change);
+      c2.textContent = signed(tasi?.changePct, '%');
+
+      c1.className = changeClass(tasi?.change);
+      c2.className = changeClass(tasi?.changePct);
+    }
+
+    function updateMeta(data) {
+      document.getElementById('lastUpdate').textContent = data.last_update || '--';
+      document.getElementById('statusText').textContent = data.status_text || '--';
+    }
+
+    async function fetchDashboardData() {
+      try {
+        const res = await fetch(`/api/dashboard?t=${Date.now()}`, { cache: 'no-store' });
+        if (!res.ok) throw new Error(`HTTP_${res.status}`);
+        const data = await res.json();
+        renderPrices(data.prices || []);
+        renderNews(data.news || []);
+        updateTasiCard(data.tasi || {});
+        updateMeta(data);
+      } catch {
+        document.getElementById('statusText').textContent = 'تعذر جلب البيانات';
+      }
+    }
+
+    async function addStock() {
+      const input = document.getElementById('stockInput');
+      const symbol = input.value.trim();
+      if (!symbol) return alert('اكتب رمز السهم أولاً');
+
+      try {
+        const res = await fetch('/api/add-symbol', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ symbol })
+        });
+        const data = await res.json();
+        if (!res.ok || !data.ok) throw new Error(data.error || 'تعذر إضافة السهم');
+        input.value = '';
+        await fetchDashboardData();
+      } catch (err) {
+        alert(err.message || 'تعذر إضافة السهم');
+      }
+    }
+
+    async function removeStock() {
+      const input = document.getElementById('stockInput');
+      const symbol = input.value.trim();
+      if (!symbol) return alert('اكتب رمز السهم أولاً');
+
+      try {
+        const res = await fetch('/api/remove-symbol', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ symbol })
+        });
+        const data = await res.json();
+        if (!res.ok || !data.ok) throw new Error(data.error || 'تعذر حذف السهم');
+        input.value = '';
+        await fetchDashboardData();
+      } catch (err) {
+        alert(err.message || 'تعذر حذف السهم');
+      }
+    }
+
+    function setRefresh(seconds) {
+      state.refreshSeconds = Number(seconds);
+      localStorage.setItem('mobileRefresh', String(state.refreshSeconds));
+      if (state.refreshTimer) clearInterval(state.refreshTimer);
+      state.refreshTimer = setInterval(fetchDashboardData, state.refreshSeconds * 1000);
+    }
+
+    document.getElementById('addStockBtn').addEventListener('click', addStock);
+    document.getElementById('removeStockBtn').addEventListener('click', removeStock);
+    document.getElementById('refreshBtn').addEventListener('click', fetchDashboardData);
+    document.getElementById('refreshSelect').addEventListener('change', e => setRefresh(e.target.value));
+    document.getElementById('stockInput').addEventListener('keydown', e => {
+      if (e.key === 'Enter') addStock();
+    });
+
+    document.querySelectorAll('.density-btn').forEach(btn => {
+      btn.addEventListener('click', () => applyDensity(btn.dataset.density));
+    });
+
+    const savedDensity = localStorage.getItem('mobileDensity') || 'medium';
+    applyDensity(savedDensity);
+
+    const savedRefresh = localStorage.getItem('mobileRefresh') || '30';
+    document.getElementById('refreshSelect').value = savedRefresh;
+
+    fetchDashboardData();
+    setRefresh(savedRefresh);
+  </script>
+</body>
+</html>
