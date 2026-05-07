@@ -6,10 +6,10 @@ import { XMLParser } from "fast-xml-parser";
 const REQUEST_TIMEOUT = 20000;
 const TIMEZONE = "Asia/Riyadh";
 
-const ARGAAM_FEEDS = [
-  ["أرقام - الرئيسية", "https://www.argaam.com/ar/rss/ho-main-news?sectionid=1523"],
-  ["أرقام - الشركات", "https://www.argaam.com/ar/rss/companies?sectionid=1543"],
-  ["أرقام - نبض السوق", "https://www.argaam.com/ar/rss/ho-market-pulse?sectionid=70"],
+const RSS_SOURCES = [
+  ["أرقام", "https://www.argaam.com/ar/rss/ho-main-news?sectionid=1523"],
+  ["الشركات", "https://www.argaam.com/ar/rss/companies?sectionid=1543"],
+  ["نبض السوق", "https://www.argaam.com/ar/rss/ho-market-pulse?sectionid=70"],
   ["أرقام - العالمية", "https://www.argaam.com/ar/rss/internationmarket-mainnewsar?sectionid=1334"],
   ["أرقام - خاص", "https://www.argaam.com/ar/rss/educationalmarket-mainnewsar?sectionid=1408"]
 ];
@@ -181,6 +181,7 @@ export async function fetchPrice(symbol) {
     });
 
     if (!res.ok) return null;
+
     const j = await res.json();
     const result = j?.chart?.result?.[0];
     const meta = result?.meta || {};
@@ -283,66 +284,76 @@ export function extractStocks(rows) {
     .sort((a, b) => symbolSortValue(a.symbol) - symbolSortValue(b.symbol));
 }
 
-export async function fetchArgaam(nowStr) {
-  const itemsOut = [];
-  const seen = new Set();
-
-  for (const [feedName, url] of ARGAAM_FEEDS) {
-    try {
-      const res = await fetch(url, {
-        headers: {
-          "user-agent": "Mozilla/5.0",
-          "accept-language": "ar,en;q=0.8"
-        }
-      });
-
-      if (!res.ok) continue;
-      const xml = await res.text();
-      const parsed = parser.parse(xml);
-      let items = parsed?.rss?.channel?.item || [];
-      if (!Array.isArray(items)) items = [items];
-
-      let count = 0;
-      for (const item of items) {
-        const title = clean(item?.title);
-        const link = clean(item?.link);
-        const pub = clean(item?.pubDate);
-
-        if (!title) continue;
-
-        const dedupeKey = `${title}||${link}`;
-        if (seen.has(dedupeKey)) continue;
-        seen.add(dedupeKey);
-
-        let pubIso = "";
-        try {
-          if (pub) {
-            pubIso = new Date(pub).toLocaleString("sv-SE", {
-              timeZone: TIMEZONE,
-              hour12: false
-            }).replace(",", "");
-          }
-        } catch {}
-
-        itemsOut.push({
-          fetchTime: nowStr,
-          source: feedName,
-          title,
-          time: pubIso,
-          url: link
-        });
-
-        count += 1;
-        if (count >= 50) break;
-      }
-    } catch {}
-  }
-
-  itemsOut.sort((a, b) => parseDt(b.time) - parseDt(a.time));
-  return itemsOut.slice(0, 200);
+function parseDateSafe(value) {
+  const t = Date.parse(String(value || "").replace(" ", "T"));
+  return Number.isFinite(t) ? t : 0;
 }
 
-function parseDt(v) {
-  const t = Date.parse(v?.replace(" ", "T"));
-  return Number.isFinite(t) ? t : 0;
+async function fetchRssSource(sourceName, url, nowStr) {
+  try {
+    const res = await fetch(url, {
+      headers: {
+        "user-agent": "Mozilla/5.0",
+        "accept-language": "ar,en;q=0.8"
+      }
+    });
+
+    if (!res.ok) return [];
+
+    const xml = await res.text();
+    const parsed = parser.parse(xml);
+    let items = parsed?.rss?.channel?.item || [];
+    if (!Array.isArray(items)) items = [items];
+
+    const out = [];
+
+    for (const item of items) {
+      const title = clean(item?.title);
+      const link = clean(item?.link);
+      const pub = clean(item?.pubDate);
+
+      if (!title) continue;
+
+      let pubIso = "";
+      try {
+        if (pub) {
+          pubIso = new Date(pub).toLocaleString("sv-SE", {
+            timeZone: TIMEZONE,
+            hour12: false
+          }).replace(",", "");
+        }
+      } catch {}
+
+      out.push({
+        fetchTime: nowStr,
+        source: sourceName,
+        title,
+        time: pubIso,
+        url: link
+      });
+    }
+
+    return out;
+  } catch {
+    return [];
+  }
+}
+
+export async function fetchArgaam(nowStr) {
+  const seen = new Set();
+  const allItems = [];
+
+  for (const [sourceName, url] of RSS_SOURCES) {
+    const items = await fetchRssSource(sourceName, url, nowStr);
+
+    for (const item of items) {
+      const key = `${item.title}||${item.url}`;
+      if (seen.has(key)) continue;
+      seen.add(key);
+      allItems.push(item);
+    }
+  }
+
+  allItems.sort((a, b) => parseDateSafe(b.time) - parseDateSafe(a.time));
+  return allItems.slice(0, 40);
 }

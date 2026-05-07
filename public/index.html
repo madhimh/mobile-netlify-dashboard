@@ -26,68 +26,61 @@
     }
 
     .app {
-      max-width: 460px;
+      max-width: 430px;
       margin: 0 auto;
-      padding: 12px;
+      padding: 10px;
     }
 
     .card {
       background: rgba(15,23,42,0.95);
       border: 1px solid var(--line);
-      border-radius: 22px;
-      padding: 14px;
-      box-shadow: 0 10px 25px rgba(0,0,0,0.25);
-      margin-bottom: 12px;
+      border-radius: 20px;
+      padding: 13px;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.22);
+      margin-bottom: 10px;
     }
 
     .title-sm {
       color: var(--muted);
-      font-size: 14px;
+      font-size: 13px;
     }
 
     .big-num {
-      font-size: 42px;
+      font-size: 40px;
       font-weight: 800;
       line-height: 1;
       margin-top: 8px;
-      letter-spacing: 0.3px;
+      letter-spacing: 0.2px;
     }
 
     .muted {
       color: var(--muted);
-      font-size: 14px;
-    }
-
-    .row {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 10px;
-    }
-
-    .row-bottom {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 12px;
-      flex-wrap: wrap;
-      margin-top: 12px;
+      font-size: 13px;
     }
 
     .chips {
       display: flex;
       gap: 8px;
       flex-wrap: wrap;
-      margin-top: 12px;
+      margin-top: 10px;
     }
 
     .chip {
       border: 1px solid var(--line);
       background: rgba(255,255,255,0.04);
-      padding: 8px 12px;
+      padding: 7px 11px;
       border-radius: 999px;
-      font-size: 15px;
+      font-size: 14px;
       font-weight: 700;
+    }
+
+    .meta-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-top: 10px;
     }
 
     .up { color: var(--up); }
@@ -98,30 +91,30 @@
       display: grid;
       grid-template-columns: 1fr 1fr;
       gap: 10px;
-      margin-bottom: 12px;
+      margin-bottom: 10px;
     }
 
     .mini {
       background: rgba(15,23,42,0.95);
       border: 1px solid var(--line);
       border-radius: 18px;
-      padding: 14px;
+      padding: 12px;
     }
 
     .mini .label {
       color: var(--muted);
-      font-size: 14px;
+      font-size: 13px;
     }
 
     .mini .val {
-      font-size: 28px;
+      font-size: 26px;
       font-weight: 800;
       margin-top: 4px;
     }
 
     .toolbar {
       display: grid;
-      gap: 8px;
+      gap: 7px;
     }
 
     input, select, button {
@@ -130,23 +123,23 @@
       border: 1px solid var(--line);
       color: var(--text);
       border-radius: 14px;
-      padding: 12px 14px;
+      padding: 9px 12px;
       font: inherit;
-      font-size: 16px;
+      font-size: 14px;
       outline: none;
-      min-height: 50px;
+      min-height: 42px;
     }
 
     .btn-row {
       display: grid;
       grid-template-columns: 1fr 1fr;
-      gap: 8px;
+      gap: 7px;
     }
 
     .density-row {
       display: grid;
       grid-template-columns: 1fr 1fr 1fr;
-      gap: 8px;
+      gap: 7px;
     }
 
     .density-btn.active {
@@ -155,9 +148,9 @@
     }
 
     .section-title {
-      font-size: 20px;
+      font-size: 18px;
       font-weight: 800;
-      margin-bottom: 10px;
+      margin-bottom: 9px;
     }
 
     .stock-list, .news-list {
@@ -169,34 +162,34 @@
       border: 1px solid var(--line);
       background: rgba(255,255,255,0.03);
       border-radius: 18px;
-      padding: 14px;
+      padding: 13px;
     }
 
     .stock-grid {
       display: grid;
-      grid-template-columns: 110px 1fr;
-      gap: 12px;
+      grid-template-columns: 100px 1fr;
+      gap: 10px;
       align-items: center;
     }
 
     .stock-price {
-      font-size: 26px;
+      font-size: 28px;
       font-weight: 800;
       text-align: left;
-      line-height: 1.2;
+      line-height: 1.1;
       white-space: nowrap;
     }
 
     .stock-name {
-      font-size: 18px;
+      font-size: 20px;
       font-weight: 800;
       line-height: 1.35;
       word-break: break-word;
     }
 
     .stock-sub {
-      font-size: 15px;
-      margin-top: 6px;
+      font-size: 16px;
+      margin-top: 5px;
       font-weight: 700;
     }
 
@@ -207,41 +200,14 @@
     }
 
     .news-meta {
-      margin-top: 8px;
+      margin-top: 7px;
       color: var(--muted);
-      font-size: 14px;
+      font-size: 13px;
     }
 
     a {
       color: #93c5fd;
       text-decoration: none;
-    }
-
-    @media (max-width: 430px) {
-      .app {
-        max-width: 100%;
-        padding: 10px;
-      }
-
-      .big-num {
-        font-size: 38px;
-      }
-
-      .stock-grid {
-        grid-template-columns: 96px 1fr;
-      }
-
-      .stock-price {
-        font-size: 24px;
-      }
-
-      .stock-name {
-        font-size: 17px;
-      }
-
-      .news-title {
-        font-size: 17px;
-      }
     }
   </style>
 </head>
@@ -254,7 +220,7 @@
         <div class="chip"><span id="tasiChange">--</span></div>
         <div class="chip"><span id="tasiPct">--</span></div>
       </div>
-      <div class="row-bottom">
+      <div class="meta-row">
         <div class="muted" id="statusText">--</div>
         <div class="muted">آخر تحديث: <span id="lastUpdate">--</span></div>
       </div>
@@ -354,11 +320,11 @@
 
       const app = document.querySelector(".app");
       if (density === "compact") {
-        app.style.maxWidth = "410px";
+        app.style.maxWidth = "390px";
       } else if (density === "comfortable") {
-        app.style.maxWidth = "520px";
+        app.style.maxWidth = "470px";
       } else {
-        app.style.maxWidth = "460px";
+        app.style.maxWidth = "430px";
       }
     }
 
