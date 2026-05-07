@@ -130,6 +130,15 @@
       min-height: 42px;
     }
 
+    button {
+      cursor: pointer;
+    }
+
+    button:disabled {
+      opacity: 0.6;
+      cursor: wait;
+    }
+
     .btn-row {
       display: grid;
       grid-template-columns: 1fr 1fr;
@@ -273,7 +282,13 @@
   </div>
 
   <script>
-    const state = { refreshSeconds: 30, refreshTimer: null };
+    const state = {
+      refreshSeconds: 30,
+      refreshTimer: null,
+      isRefreshing: false
+    };
+
+    const refreshBtn = document.getElementById("refreshBtn");
 
     function num(v) {
       const n = Number(v);
@@ -377,10 +392,17 @@
       document.getElementById("statusText").textContent = data.status_text || "--";
     }
 
-    async function fetchDashboardData() {
+    async function fetchDashboardData(force = false) {
+      if (state.isRefreshing && !force) return;
+
+      state.isRefreshing = true;
+      refreshBtn.disabled = true;
+      refreshBtn.textContent = "جاري التحديث...";
+
       try {
         const res = await fetch(`/api/dashboard?t=${Date.now()}`, { cache: "no-store" });
         if (!res.ok) throw new Error(`HTTP_${res.status}`);
+
         const data = await res.json();
         renderPrices(data.prices || []);
         renderNews(data.news || []);
@@ -388,6 +410,10 @@
         updateMeta(data);
       } catch {
         document.getElementById("statusText").textContent = "تعذر جلب البيانات";
+      } finally {
+        state.isRefreshing = false;
+        refreshBtn.disabled = false;
+        refreshBtn.textContent = "تحديث الآن";
       }
     }
 
@@ -405,7 +431,7 @@
         const data = await res.json();
         if (!res.ok || !data.ok) throw new Error(data.error || "تعذر إضافة السهم");
         input.value = "";
-        await fetchDashboardData();
+        await fetchDashboardData(true);
       } catch (err) {
         alert(err.message || "تعذر إضافة السهم");
       }
@@ -425,7 +451,7 @@
         const data = await res.json();
         if (!res.ok || !data.ok) throw new Error(data.error || "تعذر حذف السهم");
         input.value = "";
-        await fetchDashboardData();
+        await fetchDashboardData(true);
       } catch (err) {
         alert(err.message || "تعذر حذف السهم");
       }
@@ -435,12 +461,12 @@
       state.refreshSeconds = Number(seconds);
       localStorage.setItem("mobileRefresh", String(state.refreshSeconds));
       if (state.refreshTimer) clearInterval(state.refreshTimer);
-      state.refreshTimer = setInterval(fetchDashboardData, state.refreshSeconds * 1000);
+      state.refreshTimer = setInterval(() => fetchDashboardData(false), state.refreshSeconds * 1000);
     }
 
     document.getElementById("addStockBtn").addEventListener("click", addStock);
     document.getElementById("removeStockBtn").addEventListener("click", removeStock);
-    document.getElementById("refreshBtn").addEventListener("click", fetchDashboardData);
+    document.getElementById("refreshBtn").addEventListener("click", () => fetchDashboardData(true));
     document.getElementById("refreshSelect").addEventListener("change", e => setRefresh(e.target.value));
     document.getElementById("stockInput").addEventListener("keydown", e => {
       if (e.key === "Enter") addStock();
@@ -456,7 +482,7 @@
     const savedRefresh = localStorage.getItem("mobileRefresh") || "30";
     document.getElementById("refreshSelect").value = savedRefresh;
 
-    fetchDashboardData();
+    fetchDashboardData(true);
     setRefresh(savedRefresh);
   </script>
 </body>

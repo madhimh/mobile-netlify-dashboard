@@ -5,6 +5,8 @@ import { XMLParser } from "fast-xml-parser";
 
 const REQUEST_TIMEOUT = 20000;
 const TIMEZONE = "Asia/Riyadh";
+const TARGET_NEWS_COUNT = 40;
+const MAX_NEWS_PER_FEED = 100;
 
 const RSS_SOURCES = [
   ["أرقام", "https://www.argaam.com/ar/rss/ho-main-news?sectionid=1523"],
@@ -307,7 +309,7 @@ async function fetchRssSource(sourceName, url, nowStr) {
 
     const out = [];
 
-    for (const item of items) {
+    for (const item of items.slice(0, MAX_NEWS_PER_FEED)) {
       const title = clean(item?.title);
       const link = clean(item?.link);
       const pub = clean(item?.pubDate);
@@ -340,20 +342,36 @@ async function fetchRssSource(sourceName, url, nowStr) {
 }
 
 export async function fetchArgaam(nowStr) {
+  const uniqueItems = [];
+  const duplicateItems = [];
   const seen = new Set();
-  const allItems = [];
 
   for (const [sourceName, url] of RSS_SOURCES) {
     const items = await fetchRssSource(sourceName, url, nowStr);
 
     for (const item of items) {
-      const key = `${item.title}||${item.url}`;
-      if (seen.has(key)) continue;
-      seen.add(key);
-      allItems.push(item);
+      const key = item.url ? `u:${item.url}` : `t:${item.title}`;
+      if (seen.has(key)) {
+        duplicateItems.push(item);
+      } else {
+        seen.add(key);
+        uniqueItems.push(item);
+      }
     }
   }
 
-  allItems.sort((a, b) => parseDateSafe(b.time) - parseDateSafe(a.time));
-  return allItems.slice(0, 40);
+  uniqueItems.sort((a, b) => parseDateSafe(b.time) - parseDateSafe(a.time));
+  duplicateItems.sort((a, b) => parseDateSafe(b.time) - parseDateSafe(a.time));
+
+  if (uniqueItems.length >= TARGET_NEWS_COUNT) {
+    return uniqueItems.slice(0, TARGET_NEWS_COUNT);
+  }
+
+  const merged = [...uniqueItems];
+  for (const item of duplicateItems) {
+    if (merged.length >= TARGET_NEWS_COUNT) break;
+    merged.push(item);
+  }
+
+  return merged;
 }
