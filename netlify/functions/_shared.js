@@ -43,7 +43,9 @@ export function nowRiyadhString() {
     second: "2-digit",
     hour12: false
   });
-  const parts = Object.fromEntries(formatter.formatToParts(dt).map(p => [p.type, p.value]));
+  const parts = Object.fromEntries(
+    formatter.formatToParts(dt).map((p) => [p.type, p.value])
+  );
   return `${parts.year}-${parts.month}-${parts.day} ${parts.hour}:${parts.minute}:${parts.second}`;
 }
 
@@ -89,6 +91,54 @@ export function symbolSortValue(symbolCode) {
   if (code === "TASI") return -1;
   if (/^\d{3,5}$/.test(code)) return Number(code);
   return 999999;
+}
+
+export function makeShortArabicName(symbol, yahooName) {
+  const code = symbolDisplayCode(symbol);
+
+  const manual = {
+    "1120": "مصرف الراجحي",
+    "1140": "بنك البلاد",
+    "1150": "مصرف الإنماء",
+    "1180": "البنك الأهلي السعودي",
+    "2010": "سابك",
+    "2020": "سابك للمغذيات الزراعية",
+    "2222": "أرامكو السعودية",
+    "2290": "ينساب",
+    "2310": "سبكيم العالمية",
+    "7010": "إس تي سي",
+    "7020": "اتحاد اتصالات (موبايلي)",
+    "7202": "سلوشنز",
+    "8010": "التعاونية للتأمين",
+    "8230": "الراجحي تكافل",
+    "TASI": "تاسي"
+  };
+
+  if (manual[code]) return manual[code];
+
+  let name = clean(yahooName);
+
+  const replacements = [
+    [/الراجحي\s+للتأمين\s+التعاوني/g, "الراجحي تكافل"],
+    [/تكافل\s+الراجحي/g, "الراجحي تكافل"],
+    [/مصرف\s+الراجحي/g, "مصرف الراجحي"],
+    [/بنك\s+البلاد/g, "بنك البلاد"],
+    [/مصرف\s+الإنماء/g, "مصرف الإنماء"],
+    [/البنك\s+الأهلي\s+السعودي/g, "البنك الأهلي السعودي"],
+    [/سابك\s+للمغذيات\s+الزراعية/g, "سابك للمغذيات الزراعية"],
+    [/أرامكو\s+السعودية/g, "أرامكو السعودية"],
+    [/سبكيم\s+العالمية/g, "سبكيم العالمية"],
+    [/اتحاد\s+اتصالات\s+\(موبايلي\)/g, "اتحاد اتصالات (موبايلي)"],
+    [/السعودية\s+للاتصالات/g, "إس تي سي"],
+    [/شركة\s+/g, ""],
+    [/\s+/g, " "]
+  ];
+
+  for (const [pattern, replacement] of replacements) {
+    name = name.replace(pattern, replacement).trim();
+  }
+
+  return name || code;
 }
 
 export function loadBaseSymbols() {
@@ -216,7 +266,7 @@ export async function buildPriceRows() {
 }
 
 export function extractTasi(rows) {
-  return rows.find(r => String(r.symbol).toUpperCase() === "TASI") || {
+  return rows.find((r) => String(r.symbol).toUpperCase() === "TASI") || {
     symbol: "TASI",
     name: "تاسي",
     price: "",
@@ -229,7 +279,7 @@ export function extractTasi(rows) {
 
 export function extractStocks(rows) {
   return rows
-    .filter(r => String(r.symbol).toUpperCase() !== "TASI")
+    .filter((r) => String(r.symbol).toUpperCase() !== "TASI")
     .sort((a, b) => symbolSortValue(a.symbol) - symbolSortValue(b.symbol));
 }
 
