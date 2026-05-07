@@ -54,9 +54,7 @@ export function nowRiyadhString() {
 export function normalizeSymbolInput(userInput) {
   const raw = clean(userInput).toUpperCase();
 
-  if (!raw) {
-    throw new Error("رمز السهم فارغ");
-  }
+  if (!raw) throw new Error("رمز السهم فارغ");
 
   if (["TASI", "^TASI", "TASI.SR", "^TASI.SR"].includes(raw)) {
     return { normalized: "^TASI.SR", defaultName: "تاسي" };
@@ -287,6 +285,7 @@ export function extractStocks(rows) {
 
 export async function fetchArgaam(nowStr) {
   const itemsOut = [];
+  const seen = new Set();
 
   for (const [feedName, url] of ARGAAM_FEEDS) {
     try {
@@ -308,6 +307,12 @@ export async function fetchArgaam(nowStr) {
         const title = clean(item?.title);
         const link = clean(item?.link);
         const pub = clean(item?.pubDate);
+
+        if (!title) continue;
+
+        const dedupeKey = `${title}||${link}`;
+        if (seen.has(dedupeKey)) continue;
+        seen.add(dedupeKey);
 
         let pubIso = "";
         try {

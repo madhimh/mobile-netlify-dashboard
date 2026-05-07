@@ -26,58 +26,67 @@
     }
 
     .app {
-      max-width: 520px;
+      max-width: 460px;
       margin: 0 auto;
-      padding: 16px;
+      padding: 12px;
     }
 
     .card {
       background: rgba(15,23,42,0.95);
       border: 1px solid var(--line);
-      border-radius: 24px;
-      padding: 18px;
+      border-radius: 22px;
+      padding: 14px;
       box-shadow: 0 10px 25px rgba(0,0,0,0.25);
-      margin-bottom: 14px;
+      margin-bottom: 12px;
     }
 
     .title-sm {
       color: var(--muted);
-      font-size: 16px;
+      font-size: 14px;
     }
 
     .big-num {
-      font-size: 52px;
+      font-size: 42px;
       font-weight: 800;
       line-height: 1;
-      margin-top: 10px;
+      margin-top: 8px;
       letter-spacing: 0.3px;
     }
 
     .muted {
       color: var(--muted);
-      font-size: 16px;
+      font-size: 14px;
     }
 
     .row {
       display: flex;
       align-items: center;
       justify-content: space-between;
+      gap: 10px;
+    }
+
+    .row-bottom {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
       gap: 12px;
+      flex-wrap: wrap;
+      margin-top: 12px;
     }
 
     .chips {
       display: flex;
-      gap: 10px;
+      gap: 8px;
       flex-wrap: wrap;
-      margin-top: 14px;
+      margin-top: 12px;
     }
 
     .chip {
       border: 1px solid var(--line);
       background: rgba(255,255,255,0.04);
-      padding: 10px 14px;
+      padding: 8px 12px;
       border-radius: 999px;
-      font-size: 18px;
+      font-size: 15px;
       font-weight: 700;
     }
 
@@ -88,31 +97,31 @@
     .grid2 {
       display: grid;
       grid-template-columns: 1fr 1fr;
-      gap: 12px;
-      margin-bottom: 14px;
+      gap: 10px;
+      margin-bottom: 12px;
     }
 
     .mini {
       background: rgba(15,23,42,0.95);
       border: 1px solid var(--line);
-      border-radius: 20px;
-      padding: 16px;
+      border-radius: 18px;
+      padding: 14px;
     }
 
     .mini .label {
       color: var(--muted);
-      font-size: 15px;
+      font-size: 14px;
     }
 
     .mini .val {
-      font-size: 30px;
+      font-size: 28px;
       font-weight: 800;
-      margin-top: 6px;
+      margin-top: 4px;
     }
 
     .toolbar {
       display: grid;
-      gap: 10px;
+      gap: 8px;
     }
 
     input, select, button {
@@ -120,23 +129,24 @@
       background: #172033;
       border: 1px solid var(--line);
       color: var(--text);
-      border-radius: 16px;
-      padding: 14px 14px;
+      border-radius: 14px;
+      padding: 12px 14px;
       font: inherit;
-      font-size: 18px;
+      font-size: 16px;
       outline: none;
+      min-height: 50px;
     }
 
     .btn-row {
       display: grid;
       grid-template-columns: 1fr 1fr;
-      gap: 10px;
+      gap: 8px;
     }
 
     .density-row {
       display: grid;
       grid-template-columns: 1fr 1fr 1fr;
-      gap: 10px;
+      gap: 8px;
     }
 
     .density-btn.active {
@@ -145,57 +155,93 @@
     }
 
     .section-title {
-      font-size: 24px;
+      font-size: 20px;
       font-weight: 800;
-      margin-bottom: 12px;
+      margin-bottom: 10px;
     }
 
     .stock-list, .news-list {
       display: grid;
-      gap: 10px;
+      gap: 8px;
     }
 
     .stock-item, .news-item {
       border: 1px solid var(--line);
       background: rgba(255,255,255,0.03);
-      border-radius: 20px;
-      padding: 16px;
+      border-radius: 18px;
+      padding: 14px;
     }
 
-    .stock-name {
-      font-size: 28px;
-      font-weight: 800;
-      line-height: 1.35;
+    .stock-grid {
+      display: grid;
+      grid-template-columns: 110px 1fr;
+      gap: 12px;
+      align-items: center;
     }
 
     .stock-price {
-      font-size: 30px;
+      font-size: 26px;
       font-weight: 800;
       text-align: left;
       line-height: 1.2;
+      white-space: nowrap;
+    }
+
+    .stock-name {
+      font-size: 18px;
+      font-weight: 800;
+      line-height: 1.35;
+      word-break: break-word;
     }
 
     .stock-sub {
-      font-size: 18px;
-      margin-top: 8px;
+      font-size: 15px;
+      margin-top: 6px;
       font-weight: 700;
     }
 
     .news-title {
-      font-size: 22px;
-      line-height: 1.7;
+      font-size: 18px;
+      line-height: 1.6;
       font-weight: 700;
     }
 
     .news-meta {
       margin-top: 8px;
       color: var(--muted);
-      font-size: 16px;
+      font-size: 14px;
     }
 
     a {
       color: #93c5fd;
       text-decoration: none;
+    }
+
+    @media (max-width: 430px) {
+      .app {
+        max-width: 100%;
+        padding: 10px;
+      }
+
+      .big-num {
+        font-size: 38px;
+      }
+
+      .stock-grid {
+        grid-template-columns: 96px 1fr;
+      }
+
+      .stock-price {
+        font-size: 24px;
+      }
+
+      .stock-name {
+        font-size: 17px;
+      }
+
+      .news-title {
+        font-size: 17px;
+      }
     }
   </style>
 </head>
@@ -208,20 +254,20 @@
         <div class="chip"><span id="tasiChange">--</span></div>
         <div class="chip"><span id="tasiPct">--</span></div>
       </div>
-      <div class="row" style="margin-top: 14px;">
-        <div class="muted">آخر تحديث: <span id="lastUpdate">--</span></div>
+      <div class="row-bottom">
         <div class="muted" id="statusText">--</div>
+        <div class="muted">آخر تحديث: <span id="lastUpdate">--</span></div>
       </div>
     </div>
 
     <div class="grid2">
       <div class="mini">
-        <div class="label">عدد الأسهم</div>
-        <div class="val" id="countCompanies">0</div>
-      </div>
-      <div class="mini">
         <div class="label">الأخبار</div>
         <div class="val" id="countNews">0</div>
+      </div>
+      <div class="mini">
+        <div class="label">عدد الأسهم</div>
+        <div class="val" id="countCompanies">0</div>
       </div>
     </div>
 
@@ -307,15 +353,12 @@
       });
 
       const app = document.querySelector(".app");
-      const root = document.documentElement;
-
       if (density === "compact") {
-        app.style.maxWidth = "430px";
-        root.style.setProperty("--dummy", "1");
+        app.style.maxWidth = "410px";
       } else if (density === "comfortable") {
-        app.style.maxWidth = "620px";
-      } else {
         app.style.maxWidth = "520px";
+      } else {
+        app.style.maxWidth = "460px";
       }
     }
 
@@ -325,12 +368,12 @@
         const cls = changeClass(row.change);
         return `
           <div class="stock-item">
-            <div class="row">
+            <div class="stock-grid">
+              <div class="stock-price">${formatNumber(row.price)}</div>
               <div>
                 <div class="stock-name">${escapeHtml(row.name)}</div>
                 <div class="stock-sub ${cls}">${signed(row.change)} • ${signed(row.changePct, "%")}</div>
               </div>
-              <div class="stock-price">${formatNumber(row.price)}</div>
             </div>
           </div>
         `;
