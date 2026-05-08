@@ -1,325 +1,393 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="ar" dir="rtl">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>لوحة الجوال</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <title>داشبورد الأسهم</title>
+
+  <meta name="theme-color" content="#050505" />
+  <meta name="apple-mobile-web-app-title" content="داشبورد الأسهم" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="mobile-web-app-capable" content="yes" />
+
+  <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+  <link rel="icon" type="image/png" href="/apple-touch-icon.png" />
+
   <style>
     :root {
-      --bg: #020617;
-      --panel: #0f172a;
-      --line: rgba(255,255,255,0.08);
-      --text: #f8fafc;
-      --muted: #94a3b8;
-      --up: #22c55e;
-      --down: #ef4444;
-      --flat: #f59e0b;
+      --bg: #050505;
+      --card: #111111;
+      --text: #f5f5f5;
+      --muted: #a3a3a3;
+      --border: #262626;
+      --green: #22c55e;
+      --red: #ef4444;
+      --blue: #60a5fa;
+      --shadow: 0 10px 24px rgba(0, 0, 0, 0.35);
+      --radius: 18px;
     }
 
-    * { box-sizing: border-box; }
+    * {
+      box-sizing: border-box;
+      -webkit-tap-highlight-color: transparent;
+    }
 
     body {
       margin: 0;
-      font-family: "Segoe UI", Tahoma, Arial, sans-serif;
-      background: linear-gradient(180deg, #020617 0%, #0b1220 100%);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Tahoma, Arial, sans-serif;
+      background: var(--bg);
       color: var(--text);
+      padding: 14px;
+      padding-bottom: 90px;
     }
 
     .app {
-      max-width: 430px;
+      max-width: 760px;
       margin: 0 auto;
-      padding: 10px;
+    }
+
+    .header {
+      margin: 6px 2px 14px;
+    }
+
+    .title {
+      font-size: 22px;
+      font-weight: 800;
+      margin: 0;
+      letter-spacing: -0.3px;
+    }
+
+    .subtitle {
+      font-size: 13px;
+      color: var(--muted);
+      margin-top: 6px;
     }
 
     .card {
-      background: rgba(15,23,42,0.95);
-      border: 1px solid var(--line);
-      border-radius: 20px;
-      padding: 13px;
-      box-shadow: 0 10px 25px rgba(0,0,0,0.22);
-      margin-bottom: 10px;
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
     }
 
-    .title-sm {
-      color: var(--muted);
-      font-size: 13px;
+    .index-card {
+      padding: 16px;
+      margin-bottom: 14px;
     }
 
-    .big-num {
-      font-size: 40px;
-      font-weight: 800;
-      line-height: 1;
-      margin-top: 8px;
-      letter-spacing: 0.2px;
-    }
-
-    .muted {
-      color: var(--muted);
-      font-size: 13px;
-    }
-
-    .chips {
+    .index-top {
       display: flex;
-      gap: 8px;
-      flex-wrap: wrap;
-      margin-top: 10px;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
     }
 
-    .chip {
-      border: 1px solid var(--line);
-      background: rgba(255,255,255,0.04);
-      padding: 7px 11px;
-      border-radius: 999px;
+    .index-name {
       font-size: 14px;
+      color: var(--muted);
       font-weight: 700;
     }
 
-    .meta-row {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      gap: 8px;
-      flex-wrap: wrap;
-      margin-top: 10px;
-    }
-
-    .up { color: var(--up); }
-    .down { color: var(--down); }
-    .flat { color: var(--flat); }
-
-    .grid2 {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 10px;
-      margin-bottom: 10px;
-    }
-
-    .mini {
-      background: rgba(15,23,42,0.95);
-      border: 1px solid var(--line);
-      border-radius: 18px;
-      padding: 12px;
-    }
-
-    .mini .label {
-      color: var(--muted);
-      font-size: 13px;
-    }
-
-    .mini .val {
-      font-size: 26px;
+    .status-pill {
+      font-size: 12px;
       font-weight: 800;
-      margin-top: 4px;
-    }
-
-    .toolbar {
-      display: grid;
-      gap: 7px;
-    }
-
-    input, select, button {
-      width: 100%;
-      background: #172033;
-      border: 1px solid var(--line);
-      color: var(--text);
-      border-radius: 14px;
-      padding: 9px 12px;
-      font: inherit;
-      font-size: 14px;
-      outline: none;
-      min-height: 42px;
-    }
-
-    button {
-      cursor: pointer;
-    }
-
-    button:disabled {
-      opacity: 0.6;
-      cursor: wait;
-    }
-
-    .btn-row {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 7px;
-    }
-
-    .density-row {
-      display: grid;
-      grid-template-columns: 1fr 1fr 1fr;
-      gap: 7px;
-    }
-
-    .density-btn.active {
-      background: #23314f;
-      border-color: #4f82ff;
-    }
-
-    .section-title {
-      font-size: 18px;
-      font-weight: 800;
-      margin-bottom: 9px;
-    }
-
-    .stock-list, .news-list {
-      display: grid;
-      gap: 8px;
-    }
-
-    .stock-item, .news-item {
-      border: 1px solid var(--line);
-      background: rgba(255,255,255,0.03);
-      border-radius: 18px;
-      padding: 13px;
-    }
-
-    .stock-grid {
-      display: grid;
-      grid-template-columns: 100px 1fr;
-      gap: 10px;
-      align-items: center;
-    }
-
-    .stock-price {
-      font-size: 28px;
-      font-weight: 800;
-      text-align: left;
-      line-height: 1.1;
+      padding: 6px 10px;
+      border-radius: 999px;
+      background: rgba(34, 197, 94, 0.14);
+      color: var(--green);
       white-space: nowrap;
     }
 
-    .stock-name {
-      font-size: 20px;
-      font-weight: 800;
-      line-height: 1.35;
-      word-break: break-word;
+    .status-pill.offline {
+      background: rgba(239, 68, 68, 0.14);
+      color: var(--red);
     }
 
-    .stock-sub {
-      font-size: 16px;
+    .index-value {
+      font-size: 32px;
+      font-weight: 900;
+      margin-top: 10px;
+      direction: ltr;
+      text-align: right;
+    }
+
+    .index-change {
+      margin-top: 6px;
+      font-size: 15px;
+      font-weight: 800;
+      direction: ltr;
+      text-align: right;
+    }
+
+    .section {
+      margin-top: 14px;
+    }
+
+    .section-title {
+      font-size: 17px;
+      font-weight: 900;
+      margin: 0 2px 10px;
+    }
+
+    .stocks {
+      overflow: hidden;
+    }
+
+    .stock-row {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 12px;
+      align-items: center;
+      padding: 14px 15px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .stock-row:last-child {
+      border-bottom: none;
+    }
+
+    .stock-main {
+      min-width: 0;
+    }
+
+    .stock-name-link {
+      color: var(--text);
+      text-decoration: none;
+      font-size: 17px;
+      font-weight: 900;
+      line-height: 1.35;
+      display: inline-block;
+    }
+
+    .stock-name-link:hover,
+    .stock-name-link:active {
+      color: var(--blue);
+      text-decoration: underline;
+    }
+
+    .stock-symbol {
+      font-size: 12px;
+      color: var(--muted);
+      margin-top: 4px;
+      direction: ltr;
+      text-align: right;
+    }
+
+    .stock-price-box {
+      text-align: left;
+      direction: ltr;
+      min-width: 94px;
+    }
+
+    .stock-price {
+      font-size: 18px;
+      font-weight: 900;
+      line-height: 1.25;
+    }
+
+    .stock-change {
+      font-size: 13px;
+      font-weight: 800;
       margin-top: 5px;
-      font-weight: 700;
+    }
+
+    .positive {
+      color: var(--green);
+    }
+
+    .negative {
+      color: var(--red);
+    }
+
+    .neutral {
+      color: var(--muted);
+    }
+
+    .news-list {
+      overflow: hidden;
+    }
+
+    .news-item {
+      display: block;
+      padding: 14px 15px;
+      border-bottom: 1px solid var(--border);
+      text-decoration: none;
+      color: var(--text);
+    }
+
+    .news-item:last-child {
+      border-bottom: none;
     }
 
     .news-title {
-      font-size: 18px;
-      line-height: 1.6;
-      font-weight: 700;
+      font-size: 15px;
+      font-weight: 800;
+      line-height: 1.55;
     }
 
     .news-meta {
       margin-top: 7px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
       color: var(--muted);
-      font-size: 13px;
+      font-size: 12px;
     }
 
-    a {
-      color: #93c5fd;
-      text-decoration: none;
+    .news-source {
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .news-date {
+      white-space: nowrap;
+      direction: ltr;
+    }
+
+    .controls {
+      margin-top: 18px;
+      padding: 14px;
+      display: grid;
+      gap: 10px;
+    }
+
+    button {
+      width: 100%;
+      border: none;
+      border-radius: 14px;
+      padding: 13px 14px;
+      font-size: 15px;
+      font-weight: 900;
+      cursor: pointer;
+      background: #f5f5f5;
+      color: #050505;
+    }
+
+    button.secondary {
+      background: #1f2937;
+      color: #f5f5f5;
+    }
+
+    button:disabled {
+      opacity: 0.55;
+      cursor: not-allowed;
+    }
+
+    #moreNewsBtn {
+      display: none;
+    }
+
+    .last-update {
+      text-align: center;
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.5;
+    }
+
+    .error {
+      display: none;
+      margin-top: 12px;
+      padding: 12px 14px;
+      border-radius: 14px;
+      background: rgba(239, 68, 68, 0.14);
+      color: var(--red);
+      font-size: 13px;
+      font-weight: 800;
+      border: 1px solid rgba(239, 68, 68, 0.28);
+    }
+
+    .empty {
+      padding: 18px 15px;
+      color: var(--muted);
+      font-size: 14px;
+      text-align: center;
     }
   </style>
 </head>
+
 <body>
-  <div class="app">
-    <div class="card">
-      <div class="title-sm">مؤشر السوق الرئيسي</div>
-      <div class="big-num" id="tasiValue">--</div>
-      <div class="chips">
-        <div class="chip"><span id="tasiChange">--</span></div>
-        <div class="chip"><span id="tasiPct">--</span></div>
-      </div>
-      <div class="meta-row">
-        <div class="muted" id="statusText">--</div>
-        <div class="muted">آخر تحديث: <span id="lastUpdate">--</span></div>
-      </div>
-    </div>
+  <main class="app">
+    <header class="header">
+      <h1 class="title">داشبورد الأسهم</h1>
+      <div class="subtitle" id="pageSubtitle">قراءة مباشرة من Supabase</div>
+    </header>
 
-    <div class="grid2">
-      <div class="mini">
-        <div class="label">الأخبار</div>
-        <div class="val" id="countNews">0</div>
+    <section class="card index-card" id="indexCard">
+      <div class="index-top">
+        <div class="index-name">المؤشر العام TASI</div>
+        <div class="status-pill" id="statusPill">جاري التحديث</div>
       </div>
-      <div class="mini">
-        <div class="label">عدد الأسهم</div>
-        <div class="val" id="countCompanies">0</div>
+      <div class="index-value" id="indexValue">--</div>
+      <div class="index-change neutral" id="indexChange">--</div>
+    </section>
+
+    <section class="section">
+      <h2 class="section-title">الأسهم</h2>
+      <div class="card stocks" id="stocksContainer">
+        <div class="empty">جاري تحميل الأسعار...</div>
       </div>
-    </div>
+    </section>
 
-    <div class="card">
-      <div class="section-title">التحكم</div>
-      <div class="toolbar">
-        <input id="stockInput" type="text" placeholder="أدخل الرمز مثل 8230">
-        <div class="btn-row">
-          <button id="addStockBtn">إضافة سهم</button>
-          <button id="removeStockBtn">حذف سهم</button>
-        </div>
-        <div class="density-row">
-          <button class="density-btn" data-density="compact">مضغوط</button>
-          <button class="density-btn active" data-density="medium">وسط</button>
-          <button class="density-btn" data-density="comfortable">مريح</button>
-        </div>
-        <select id="refreshSelect">
-          <option value="15">15 ثانية</option>
-          <option value="30" selected>30 ثانية</option>
-          <option value="60">60 ثانية</option>
-          <option value="120">120 ثانية</option>
-          <option value="300">5 دقائق</option>
-        </select>
-        <button id="refreshBtn">تحديث الآن</button>
+    <section class="section">
+      <h2 class="section-title">الأخبار</h2>
+      <div class="card news-list" id="newsContainer">
+        <div class="empty">جاري تحميل الأخبار...</div>
       </div>
-    </div>
+    </section>
 
-    <div class="card">
-      <div class="section-title">الأسعار</div>
-      <div class="stock-list" id="pricesBody"></div>
-    </div>
-
-    <div class="card">
-      <div class="section-title">آخر الأخبار</div>
-      <div class="news-list" id="newsList"></div>
-    </div>
-  </div>
+    <section class="card controls">
+      <button type="button" class="secondary" id="moreNewsBtn">المزيد</button>
+      <button type="button" id="refreshBtn">تحديث الآن</button>
+      <div class="last-update" id="lastUpdate">آخر تحديث: --</div>
+      <div class="error" id="errorBox"></div>
+    </section>
+  </main>
 
   <script>
-    const state = {
-      refreshSeconds: 30,
-      refreshTimer: null,
-      isRefreshing: false
+    const PRICES_URL = "https://qhqmvrfmvdxqzxwjdiny.supabase.co/storage/v1/object/public/mobile-data/prices.json";
+    const NEWS_URL = "https://qhqmvrfmvdxqzxwjdiny.supabase.co/storage/v1/object/public/mobile-data/news.json";
+
+    const NEWS_PAGE_SIZE = 7;
+
+    const ARGAAM_COMPANY_IDS = {
+      "1111": "4067",
+      "1120": "43",
+      "1140": "44",
+      "1150": "826",
+      "1180": "3413",
+      "2010": "77",
+      "2020": "79",
+      "2222": "3509",
+      "2290": "88",
+      "2310": "585",
+      "7010": "30",
+      "7020": "31",
+      "7202": "2983",
+      "8010": "33",
+      "8230": "870"
     };
 
-    const refreshBtn = document.getElementById("refreshBtn");
+    let allNews = [];
+    let newsPage = 0;
 
-    function num(v) {
-      const n = Number(v);
-      return Number.isFinite(n) ? n : null;
-    }
+    const els = {
+      statusPill: document.getElementById("statusPill"),
+      indexValue: document.getElementById("indexValue"),
+      indexChange: document.getElementById("indexChange"),
+      stocksContainer: document.getElementById("stocksContainer"),
+      newsContainer: document.getElementById("newsContainer"),
+      moreNewsBtn: document.getElementById("moreNewsBtn"),
+      refreshBtn: document.getElementById("refreshBtn"),
+      lastUpdate: document.getElementById("lastUpdate"),
+      errorBox: document.getElementById("errorBox"),
+      pageSubtitle: document.getElementById("pageSubtitle")
+    };
 
-    function formatNumber(value, decimals = 2) {
-      const n = num(value);
-      if (n === null) return "--";
-      return n.toLocaleString("en-US", {
-        minimumFractionDigits: decimals,
-        maximumFractionDigits: decimals
-      });
-    }
-
-    function changeClass(value) {
-      const n = num(value);
-      if (n === null) return "flat";
-      if (n > 0) return "up";
-      if (n < 0) return "down";
-      return "flat";
-    }
-
-    function signed(value, suffix = "") {
-      const n = num(value);
-      if (n === null) return "--";
-      return `${n > 0 ? "+" : ""}${formatNumber(n)}${suffix}`;
-    }
-
-    function escapeHtml(text) {
-      return String(text ?? "")
+    function escapeHtml(value) {
+      return String(value ?? "")
         .replaceAll("&", "&amp;")
         .replaceAll("<", "&lt;")
         .replaceAll(">", "&gt;")
@@ -327,163 +395,313 @@
         .replaceAll("'", "&#039;");
     }
 
-    function applyDensity(density) {
-      localStorage.setItem("mobileDensity", density);
-      document.querySelectorAll(".density-btn").forEach(btn => {
-        btn.classList.toggle("active", btn.dataset.density === density);
-      });
+    function toNumber(value) {
+      if (value === null || value === undefined || value === "") return null;
+      const n = Number(String(value).replaceAll(",", "").replaceAll("%", ""));
+      return Number.isFinite(n) ? n : null;
+    }
 
-      const app = document.querySelector(".app");
-      if (density === "compact") {
-        app.style.maxWidth = "390px";
-      } else if (density === "comfortable") {
-        app.style.maxWidth = "470px";
+    function formatNumber(value, digits = 2) {
+      const n = toNumber(value);
+      if (n === null) return "--";
+      return n.toLocaleString("en-US", {
+        minimumFractionDigits: digits,
+        maximumFractionDigits: digits
+      });
+    }
+
+    function formatSigned(value, digits = 2) {
+      const n = toNumber(value);
+      if (n === null) return "--";
+      const sign = n > 0 ? "+" : "";
+      return sign + n.toLocaleString("en-US", {
+        minimumFractionDigits: digits,
+        maximumFractionDigits: digits
+      });
+    }
+
+    function getChangeClass(value) {
+      const n = toNumber(value);
+      if (n === null || n === 0) return "neutral";
+      return n > 0 ? "positive" : "negative";
+    }
+
+    function getArrayFromPayload(payload, keys) {
+      if (Array.isArray(payload)) return payload;
+
+      for (const key of keys) {
+        if (Array.isArray(payload?.[key])) return payload[key];
+      }
+
+      if (Array.isArray(payload?.data)) return payload.data;
+      if (Array.isArray(payload?.items)) return payload.items;
+
+      return [];
+    }
+
+    function getField(row, keys, fallback = "") {
+      for (const key of keys) {
+        if (row && row[key] !== undefined && row[key] !== null && row[key] !== "") {
+          return row[key];
+        }
+      }
+      return fallback;
+    }
+
+    function normalizeSymbol(value) {
+      return String(value ?? "")
+        .replace(".SR", "")
+        .replace("TADAWUL:", "")
+        .trim();
+    }
+
+    function getArgaamUrl(symbol) {
+      const id = ARGAAM_COMPANY_IDS[symbol];
+      if (!id) return "";
+      return `https://www.argaam.com/ar/company/companyoverview/marketid/3/companyid/${id}`;
+    }
+
+    function renderStatus(pricesPayload) {
+      const status = pricesPayload?.status || "";
+      const statusText = pricesPayload?.status_text || pricesPayload?.statusText || "";
+
+      els.statusPill.textContent = statusText || (status === "live" ? "متصل مباشر" : "غير متصل");
+
+      if (status === "live") {
+        els.statusPill.classList.remove("offline");
       } else {
-        app.style.maxWidth = "430px";
+        els.statusPill.classList.add("offline");
       }
     }
 
-    function renderPrices(rows) {
-      const body = document.getElementById("pricesBody");
-      body.innerHTML = rows.map(row => {
-        const cls = changeClass(row.change);
+    function renderIndex(pricesPayload) {
+      const rawStocks = getArrayFromPayload(pricesPayload, ["stocks", "prices", "rows", "symbols"]);
+
+      const index =
+        pricesPayload?.index ||
+        pricesPayload?.tasi ||
+        pricesPayload?.market_index ||
+        pricesPayload?.marketIndex ||
+        null;
+
+      let value = null;
+      let change = null;
+      let changePct = null;
+
+      if (index) {
+        value = getField(index, ["value", "price", "last", "last_price", "lastPrice", "close"]);
+        change = getField(index, ["change", "net_change", "netChange"]);
+        changePct = getField(index, ["change_percent", "changePercent", "change_pct", "pct", "percent"]);
+      } else {
+        const maybeTasi = rawStocks.find((row) => {
+          const symbol = normalizeSymbol(getField(row, ["symbol", "code", "ticker"]));
+          const name = String(getField(row, ["name", "stock", "company", "company_name", "arabic_name"]));
+          return symbol.toUpperCase() === "TASI" || name.includes("تاسي") || name.includes("المؤشر");
+        });
+
+        if (maybeTasi) {
+          value = getField(maybeTasi, ["price", "last", "last_price", "lastPrice", "close"]);
+          change = getField(maybeTasi, ["change", "net_change", "netChange"]);
+          changePct = getField(maybeTasi, ["change_percent", "changePercent", "change_pct", "pct", "percent"]);
+        }
+      }
+
+      els.indexValue.textContent = formatNumber(value, 2);
+
+      const changeText = `${formatSigned(change, 2)}  (${formatSigned(changePct, 2)}%)`;
+      els.indexChange.textContent = changeText;
+      els.indexChange.className = "index-change " + getChangeClass(change || changePct);
+    }
+
+    function renderStockName(row) {
+      const symbol = normalizeSymbol(getField(row, ["symbol", "code", "ticker"]));
+      const name = getField(row, ["name", "stock", "company", "company_name", "arabic_name"], symbol);
+      const link = getArgaamUrl(symbol);
+
+      if (link) {
+        return `<a class="stock-name-link" href="${escapeHtml(link)}" target="_blank" rel="noopener noreferrer">${escapeHtml(name)}</a>`;
+      }
+
+      return `<span class="stock-name-link">${escapeHtml(name)}</span>`;
+    }
+
+    function renderStocks(pricesPayload) {
+      let stocks = getArrayFromPayload(pricesPayload, ["stocks", "prices", "rows", "symbols"]);
+
+      stocks = stocks.filter((row) => {
+        const symbol = normalizeSymbol(getField(row, ["symbol", "code", "ticker"]));
+        const name = String(getField(row, ["name", "stock", "company", "company_name", "arabic_name"]));
+        return symbol.toUpperCase() !== "TASI" && !name.includes("المؤشر العام");
+      });
+
+      if (!stocks.length) {
+        els.stocksContainer.innerHTML = `<div class="empty">لا توجد أسعار متاحة</div>`;
+        return;
+      }
+
+      els.stocksContainer.innerHTML = stocks.map((row) => {
+        const symbol = normalizeSymbol(getField(row, ["symbol", "code", "ticker"]));
+        const price = getField(row, ["price", "last", "last_price", "lastPrice", "close"]);
+        const change = getField(row, ["change", "net_change", "netChange"]);
+        const changePct = getField(row, ["change_percent", "changePercent", "change_pct", "pct", "percent"]);
+        const changeClass = getChangeClass(change || changePct);
+
         return `
-          <div class="stock-item">
-            <div class="stock-grid">
-              <div class="stock-price">${formatNumber(row.price)}</div>
-              <div>
-                <div class="stock-name">${escapeHtml(row.name)}</div>
-                <div class="stock-sub ${cls}">${signed(row.change)} • ${signed(row.changePct, "%")}</div>
+          <div class="stock-row">
+            <div class="stock-main">
+              ${renderStockName(row)}
+              <div class="stock-symbol">${escapeHtml(symbol)}</div>
+            </div>
+            <div class="stock-price-box">
+              <div class="stock-price">${formatNumber(price, 2)}</div>
+              <div class="stock-change ${changeClass}">
+                ${formatSigned(change, 2)} / ${formatSigned(changePct, 2)}%
               </div>
             </div>
           </div>
         `;
       }).join("");
-      document.getElementById("countCompanies").textContent = rows.length;
     }
 
-    function renderNews(items) {
-      const list = document.getElementById("newsList");
-      if (!items.length) {
-        list.innerHTML = '<div class="news-item">لا توجد أخبار متاحة حالياً.</div>';
+    function normalizeNewsDate(value) {
+      if (!value) return "";
+      const d = new Date(value);
+      if (Number.isNaN(d.getTime())) return String(value);
+      return d.toLocaleString("ar-SA", {
+        year: "numeric",
+        month: "short",
+        day: "numeric",
+        hour: "2-digit",
+        minute: "2-digit"
+      });
+    }
+
+    function renderNews() {
+      if (!allNews.length) {
+        els.newsContainer.innerHTML = `<div class="empty">لا توجد أخبار متاحة</div>`;
+        els.moreNewsBtn.style.display = "none";
+        return;
+      }
+
+      const start = newsPage * NEWS_PAGE_SIZE;
+      const end = start + NEWS_PAGE_SIZE;
+      const pageItems = allNews.slice(start, end);
+
+      els.newsContainer.innerHTML = pageItems.map((item) => {
+        const title = getField(item, ["title", "headline", "name"], "خبر بدون عنوان");
+        const url = getField(item, ["url", "link", "href"], "#");
+        const source = getField(item, ["source", "feed", "category"], "أرقام");
+        const date = getField(item, ["date", "published", "pubDate", "published_at", "publishedAt"], "");
+
+        return `
+          <a class="news-item" href="${escapeHtml(url)}" target="_blank" rel="noopener noreferrer">
+            <div class="news-title">${escapeHtml(title)}</div>
+            <div class="news-meta">
+              <span class="news-source">${escapeHtml(source)}</span>
+              <span class="news-date">${escapeHtml(normalizeNewsDate(date))}</span>
+            </div>
+          </a>
+        `;
+      }).join("");
+
+      els.moreNewsBtn.style.display = allNews.length > NEWS_PAGE_SIZE ? "block" : "none";
+
+      if (end >= allNews.length) {
+        els.moreNewsBtn.textContent = "إخفاء";
       } else {
-        list.innerHTML = items.map(item => `
-          <div class="news-item">
-            <div class="news-title"><a href="${escapeHtml(item.url || "#")}" target="_blank" rel="noopener noreferrer">${escapeHtml(item.title)}</a></div>
-            <div class="news-meta">${escapeHtml(item.source || "خبر")} • ${escapeHtml(item.time || "")}</div>
-          </div>
-        `).join("");
+        els.moreNewsBtn.textContent = "المزيد";
       }
-      document.getElementById("countNews").textContent = items.length;
     }
 
-    function updateTasiCard(tasi) {
-      const c1 = document.getElementById("tasiChange");
-      const c2 = document.getElementById("tasiPct");
-      document.getElementById("tasiValue").textContent = formatNumber(tasi?.price);
-      c1.textContent = signed(tasi?.change);
-      c2.textContent = signed(tasi?.changePct, "%");
-      c1.className = changeClass(tasi?.change);
-      c2.className = changeClass(tasi?.changePct);
+    function renderLastUpdate(pricesPayload, newsPayload) {
+      const updated =
+        pricesPayload?.updated_at ||
+        pricesPayload?.updatedAt ||
+        pricesPayload?.last_update ||
+        pricesPayload?.lastUpdate ||
+        newsPayload?.updated_at ||
+        newsPayload?.updatedAt ||
+        newsPayload?.last_update ||
+        newsPayload?.lastUpdate ||
+        new Date().toISOString();
+
+      els.lastUpdate.textContent = "آخر تحديث: " + normalizeNewsDate(updated);
     }
 
-    function updateMeta(data) {
-      document.getElementById("lastUpdate").textContent = data.last_update || "--";
-      document.getElementById("statusText").textContent = data.status_text || "--";
+    function showError(message) {
+      els.errorBox.textContent = message;
+      els.errorBox.style.display = "block";
     }
 
-    async function fetchDashboardData(force = false) {
-      if (state.isRefreshing && !force) return;
+    function clearError() {
+      els.errorBox.textContent = "";
+      els.errorBox.style.display = "none";
+    }
 
-      state.isRefreshing = true;
-      refreshBtn.disabled = true;
-      refreshBtn.textContent = "جاري التحديث...";
+    async function fetchJson(url) {
+      const response = await fetch(url + "?t=" + Date.now(), {
+        method: "GET",
+        cache: "no-store"
+      });
+
+      if (!response.ok) {
+        throw new Error("فشل تحميل البيانات: " + response.status);
+      }
+
+      return response.json();
+    }
+
+    async function loadDashboard() {
+      clearError();
+      els.refreshBtn.disabled = true;
+      els.refreshBtn.textContent = "جاري التحديث...";
 
       try {
-        const res = await fetch(`/api/dashboard?t=${Date.now()}`, { cache: "no-store" });
-        if (!res.ok) throw new Error(`HTTP_${res.status}`);
+        const [pricesPayload, newsPayload] = await Promise.all([
+          fetchJson(PRICES_URL),
+          fetchJson(NEWS_URL)
+        ]);
 
-        const data = await res.json();
-        renderPrices(data.prices || []);
-        renderNews(data.news || []);
-        updateTasiCard(data.tasi || {});
-        updateMeta(data);
-      } catch {
-        document.getElementById("statusText").textContent = "تعذر جلب البيانات";
+        renderStatus(pricesPayload);
+        renderIndex(pricesPayload);
+        renderStocks(pricesPayload);
+
+        allNews = getArrayFromPayload(newsPayload, ["news", "items", "articles", "rows"]);
+        newsPage = 0;
+        renderNews();
+
+        renderLastUpdate(pricesPayload, newsPayload);
+
+        els.pageSubtitle.textContent = "قراءة مباشرة من Supabase";
+      } catch (error) {
+        console.error(error);
+        showError("تعذر تحديث البيانات من Supabase. تأكد من رفع news.json و prices.json الصحيحين.");
+        els.statusPill.textContent = "غير متصل";
+        els.statusPill.classList.add("offline");
       } finally {
-        state.isRefreshing = false;
-        refreshBtn.disabled = false;
-        refreshBtn.textContent = "تحديث الآن";
+        els.refreshBtn.disabled = false;
+        els.refreshBtn.textContent = "تحديث الآن";
       }
     }
 
-    async function addStock() {
-      const input = document.getElementById("stockInput");
-      const symbol = input.value.trim();
-      if (!symbol) return alert("اكتب رمز السهم أولاً");
+    els.moreNewsBtn.addEventListener("click", () => {
+      const start = newsPage * NEWS_PAGE_SIZE;
+      const end = start + NEWS_PAGE_SIZE;
 
-      try {
-        const res = await fetch("/api/add-symbol", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ symbol })
-        });
-        const data = await res.json();
-        if (!res.ok || !data.ok) throw new Error(data.error || "تعذر إضافة السهم");
-        input.value = "";
-        await fetchDashboardData(true);
-      } catch (err) {
-        alert(err.message || "تعذر إضافة السهم");
+      if (end >= allNews.length) {
+        newsPage = 0;
+      } else {
+        newsPage += 1;
       }
-    }
 
-    async function removeStock() {
-      const input = document.getElementById("stockInput");
-      const symbol = input.value.trim();
-      if (!symbol) return alert("اكتب رمز السهم أولاً");
-
-      try {
-        const res = await fetch("/api/remove-symbol", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ symbol })
-        });
-        const data = await res.json();
-        if (!res.ok || !data.ok) throw new Error(data.error || "تعذر حذف السهم");
-        input.value = "";
-        await fetchDashboardData(true);
-      } catch (err) {
-        alert(err.message || "تعذر حذف السهم");
-      }
-    }
-
-    function setRefresh(seconds) {
-      state.refreshSeconds = Number(seconds);
-      localStorage.setItem("mobileRefresh", String(state.refreshSeconds));
-      if (state.refreshTimer) clearInterval(state.refreshTimer);
-      state.refreshTimer = setInterval(() => fetchDashboardData(false), state.refreshSeconds * 1000);
-    }
-
-    document.getElementById("addStockBtn").addEventListener("click", addStock);
-    document.getElementById("removeStockBtn").addEventListener("click", removeStock);
-    document.getElementById("refreshBtn").addEventListener("click", () => fetchDashboardData(true));
-    document.getElementById("refreshSelect").addEventListener("change", e => setRefresh(e.target.value));
-    document.getElementById("stockInput").addEventListener("keydown", e => {
-      if (e.key === "Enter") addStock();
+      renderNews();
     });
 
-    document.querySelectorAll(".density-btn").forEach(btn => {
-      btn.addEventListener("click", () => applyDensity(btn.dataset.density));
+    els.refreshBtn.addEventListener("click", () => {
+      loadDashboard();
     });
 
-    const savedDensity = localStorage.getItem("mobileDensity") || "medium";
-    applyDensity(savedDensity);
-
-    const savedRefresh = localStorage.getItem("mobileRefresh") || "30";
-    document.getElementById("refreshSelect").value = savedRefresh;
-
-    fetchDashboardData(true);
-    setRefresh(savedRefresh);
+    loadDashboard();
   </script>
 </body>
 </html>
