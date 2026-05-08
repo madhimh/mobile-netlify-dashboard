@@ -59,9 +59,12 @@
     }
 
     .subtitle {
-      font-size: 13px;
-      color: var(--muted);
-      margin-top: 6px;
+      font-size: 15px;
+      color: #d4d4d4;
+      margin-top: 7px;
+      font-weight: 800;
+      direction: ltr;
+      text-align: right;
     }
 
     .card {
@@ -299,13 +302,6 @@
       display: none;
     }
 
-    .last-update {
-      text-align: center;
-      color: var(--muted);
-      font-size: 12px;
-      line-height: 1.5;
-    }
-
     .error {
       display: none;
       margin-top: 12px;
@@ -331,7 +327,7 @@
   <main class="app">
     <header class="header">
       <h1 class="title">داشبورد الأسهم</h1>
-      <div class="subtitle" id="pageSubtitle">قراءة مباشرة من Supabase</div>
+      <div class="subtitle" id="lastUpdate">آخر تحديث: --</div>
     </header>
 
     <section class="card index-card" id="indexCard">
@@ -369,8 +365,6 @@
       </select>
 
       <button type="button" id="refreshBtn">تحديث الآن</button>
-
-      <div class="last-update" id="lastUpdate">آخر تحديث: --</div>
       <div class="error" id="errorBox"></div>
     </section>
   </main>
@@ -414,8 +408,7 @@
       refreshBtn: document.getElementById("refreshBtn"),
       refreshIntervalSelect: document.getElementById("refreshIntervalSelect"),
       lastUpdate: document.getElementById("lastUpdate"),
-      errorBox: document.getElementById("errorBox"),
-      pageSubtitle: document.getElementById("pageSubtitle")
+      errorBox: document.getElementById("errorBox")
     };
 
     function escapeHtml(value) {
@@ -595,16 +588,24 @@
       }).join("");
     }
 
-    function normalizeNewsDate(value) {
+    function formatGregorianDate(value) {
       if (!value) return "";
+
       const d = new Date(value);
-      if (Number.isNaN(d.getTime())) return String(value);
-      return d.toLocaleString("ar-SA", {
+
+      if (Number.isNaN(d.getTime())) {
+        return String(value);
+      }
+
+      return d.toLocaleString("en-GB", {
+        calendar: "gregory",
+        numberingSystem: "latn",
         year: "numeric",
         month: "short",
         day: "numeric",
-        hour: "2-digit",
-        minute: "2-digit"
+        hour: "numeric",
+        minute: "2-digit",
+        hour12: true
       });
     }
 
@@ -630,7 +631,7 @@
             <div class="news-title">${escapeHtml(title)}</div>
             <div class="news-meta">
               <span class="news-source">${escapeHtml(source)}</span>
-              <span class="news-date">${escapeHtml(normalizeNewsDate(date))}</span>
+              <span class="news-date">${escapeHtml(formatGregorianDate(date))}</span>
             </div>
           </a>
         `;
@@ -657,7 +658,7 @@
         newsPayload?.lastUpdate ||
         new Date().toISOString();
 
-      els.lastUpdate.textContent = "آخر تحديث: " + normalizeNewsDate(updated);
+      els.lastUpdate.textContent = "آخر تحديث: " + formatGregorianDate(updated);
     }
 
     function showError(message) {
@@ -706,8 +707,6 @@
         renderNews();
 
         renderLastUpdate(pricesPayload, newsPayload);
-
-        els.pageSubtitle.textContent = "قراءة مباشرة من Supabase";
       } catch (error) {
         console.error(error);
         showError("تعذر تحديث البيانات من Supabase. تأكد من رفع news.json و prices.json الصحيحين.");
