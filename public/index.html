@@ -254,6 +254,25 @@
       gap: 10px;
     }
 
+    .control-label {
+      font-size: 13px;
+      color: var(--muted);
+      font-weight: 800;
+      margin-bottom: -4px;
+    }
+
+    select {
+      width: 100%;
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 13px 14px;
+      font-size: 15px;
+      font-weight: 900;
+      background: #1f2937;
+      color: #f5f5f5;
+      outline: none;
+    }
+
     button {
       width: 100%;
       border: none;
@@ -340,7 +359,17 @@
 
     <section class="card controls">
       <button type="button" class="secondary" id="moreNewsBtn">المزيد</button>
+
+      <div class="control-label">التحديث التلقائي</div>
+      <select id="refreshIntervalSelect">
+        <option value="30">كل 30 ثانية</option>
+        <option value="60" selected>كل 60 ثانية</option>
+        <option value="120">كل 120 ثانية</option>
+        <option value="300">كل 5 دقائق</option>
+      </select>
+
       <button type="button" id="refreshBtn">تحديث الآن</button>
+
       <div class="last-update" id="lastUpdate">آخر تحديث: --</div>
       <div class="error" id="errorBox"></div>
     </section>
@@ -372,6 +401,8 @@
 
     let allNews = [];
     let newsPage = 0;
+    let refreshTimer = null;
+    let isLoading = false;
 
     const els = {
       statusPill: document.getElementById("statusPill"),
@@ -381,6 +412,7 @@
       newsContainer: document.getElementById("newsContainer"),
       moreNewsBtn: document.getElementById("moreNewsBtn"),
       refreshBtn: document.getElementById("refreshBtn"),
+      refreshIntervalSelect: document.getElementById("refreshIntervalSelect"),
       lastUpdate: document.getElementById("lastUpdate"),
       errorBox: document.getElementById("errorBox"),
       pageSubtitle: document.getElementById("pageSubtitle")
@@ -652,6 +684,9 @@
     }
 
     async function loadDashboard() {
+      if (isLoading) return;
+
+      isLoading = true;
       clearError();
       els.refreshBtn.disabled = true;
       els.refreshBtn.textContent = "جاري التحديث...";
@@ -679,9 +714,23 @@
         els.statusPill.textContent = "غير متصل";
         els.statusPill.classList.add("offline");
       } finally {
+        isLoading = false;
         els.refreshBtn.disabled = false;
         els.refreshBtn.textContent = "تحديث الآن";
       }
+    }
+
+    function startAutoRefresh() {
+      if (refreshTimer) {
+        clearInterval(refreshTimer);
+        refreshTimer = null;
+      }
+
+      const seconds = Number(els.refreshIntervalSelect.value || 60);
+
+      refreshTimer = setInterval(() => {
+        loadDashboard();
+      }, seconds * 1000);
     }
 
     els.moreNewsBtn.addEventListener("click", () => {
@@ -701,7 +750,12 @@
       loadDashboard();
     });
 
+    els.refreshIntervalSelect.addEventListener("change", () => {
+      startAutoRefresh();
+    });
+
     loadDashboard();
+    startAutoRefresh();
   </script>
 </body>
 </html>
